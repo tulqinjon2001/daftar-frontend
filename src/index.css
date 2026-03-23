@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+/* Dark mode: .dark class <html> da bo‘lganda dark: ishlaydi */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ——— Dizayn tokenlari (barcha asosiy ranglar shu yerdan) ——— */
+@theme {
+  /* Asosiy brend (yashil) */
+  --color-app-primary: #22c55e;
+  --color-app-primary-dark: #16a34a;
+  --color-app-primary-darker: #15803d;
+  /* Moliyaviy / bildirishnoma */
+  --color-app-danger: #e61919;
+  --color-app-warning: #f37315;
+  /* Fon va matn (qisman) */
+  --color-app-page: #f8fafc;
+  --color-app-page-dark: #0f172a;
+}
+
+:root {
+  --app-gradient-balance: linear-gradient(
+    135deg,
+    var(--color-app-primary) 0%,
+    var(--color-app-primary-dark) 50%,
+    var(--color-app-primary-darker) 100%
+  );
+  --app-gradient-cta: linear-gradient(
+    135deg,
+    var(--color-app-primary) 0%,
+    var(--color-app-primary-dark) 100%
+  );
+}
+
+/* Eski nomlar (kerak bo‘lsa import qilish) */
+:root {
+  --color-accent: var(--color-app-primary);
+  --color-navy: #0f172a;
+}
+
+/* Mobil xavfsiz zona — notch / home indicator */
+.safe-area-pt {
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+}
+
+.safe-area-pb {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+.pb-safe {
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Ilova skeleti: bir xil fon va pastki nav uchun joy */
+.app-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 5rem;
+  background-color: var(--color-app-page);
+}
+
+.dark .app-page {
+  background-color: var(--color-app-page-dark);
+}
+
+/* Bir xil asosiy tugma (uzun variant) */
+.btn-app-primary {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.08);
+  background-color: var(--color-app-primary);
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.btn-app-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-app-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-app-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
