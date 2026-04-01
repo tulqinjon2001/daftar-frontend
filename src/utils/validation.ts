@@ -1,7 +1,6 @@
 export function validatePhone(value: string): string | null {
   const digits = value.replace(/\D/g, "");
-  if (digits.length !== 9) return "Telefon 9 ta raqamdan iborat bo‘lishi kerak (90 123 45 67)";
-  if (!/^9[0-9]/.test(digits)) return "90 yoki 91 bilan boshlansin";
+  if (digits.length !== 9) return "Telefon 9 ta raqamdan iborat bo‘lishi kerak";
   return null;
 }
 

@@ -5,7 +5,9 @@ import PrivateRoute from "./components/PrivateRoute";
 
 // Public sahifalar
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import OwnerRegister from "./pages/OwnerRegister";
+import CustomerRegister from "./pages/CustomerRegister";
 import ForgotPassword from "./pages/ForgotPassword";
 
 // Himoyalangan sahifalar
@@ -29,6 +31,9 @@ import SalesReport from "./pages/SalesReport";
 import ExpenseReport from "./pages/ExpenseReport";
 import AddSale from "./pages/AddSale";
 import Notifications from "./pages/Notifications";
+import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerProfile from "./pages/CustomerProfile";
+import CustomerShopHistory from "./pages/CustomerShopHistory";
 
 export default function App() {
   const theme = useThemeStore((s) => s.theme);
@@ -38,16 +43,22 @@ export default function App() {
   }, [theme]);
 
   return (
-    <div className="max-w-md mx-auto min-h-screen">
+    <div className="w-full max-w-md mx-auto min-h-screen overflow-x-hidden antialiased">
       <Routes>
         {/* ——— Public routelar ——— */}
         <Route path="/" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/register-owner" element={<OwnerRegister />} />
+        <Route path="/register-customer" element={<CustomerRegister />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* ——— Himoyalangan routelar — token bo'lmasa / ga yo'naltiriladi ——— */}
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/customer" element={<CustomerDashboard />} />
+          <Route path="/customer/shop/:shopId" element={<CustomerShopHistory />} />
+          <Route path="/customer/profile" element={<CustomerProfile />} />
+          <Route path="/customer/security" element={<Security />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/security" element={<Security />} />

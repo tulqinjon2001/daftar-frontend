@@ -327,7 +327,7 @@ export default function Suppliers() {
         ) : (
           <>
             <ul className="space-y-3">
-              {filteredSuppliers.map((supplier) => {
+              {filteredSuppliers.map((supplier, index) => {
                 const balanceNum = parseFloat(String(supplier.debt).replace(/[,\s]/g, "")) || 0;
                 const isPositive = balanceNum === 0;
                 const absFormatted = Math.abs(balanceNum)
@@ -343,8 +343,14 @@ export default function Suppliers() {
                     key={supplier.id}
                     className="rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden"
                   >
-                    {/* Card top — avatar + info */}
-                    <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+                    {/* Card top — index + avatar + info */}
+                    <div className="flex items-start gap-2 sm:gap-3 px-4 pt-4 pb-3">
+                      <span
+                        className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-full bg-app-primary/10 dark:bg-app-primary/20 flex items-center justify-center text-app-primary-dark dark:text-app-primary text-xs font-bold tabular-nums mt-0.5"
+                        aria-hidden
+                      >
+                        {index + 1}
+                      </span>
                       {/* Avatar */}
                       <div
                         className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm"

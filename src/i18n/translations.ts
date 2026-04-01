@@ -151,6 +151,12 @@ export interface Translations {
   debtCurrentDebt: string;
   expectedFromClients: string;
   expectedFromClientsTotal: string;
+  /** Top 10 mijozlar ro'yxati (dashboard) */
+  topDebtorsTitle: string;
+  topSuppliersTitle: string;
+  topDebtorsFilterBalance: string;
+  topDebtorsFilterRepaid: string;
+  topDebtorsEmpty: string;
   received: string;
   paid: string;
   sales: string;
@@ -428,6 +434,11 @@ const translations: Record<LangCode, Translations> = {
     debtCurrentDebt: "Hozirgi qarz",
     expectedFromClients: "Mijozlardan kutilayotgan mablag'",
     expectedFromClientsTotal: "Mijozlardan kutilmoqda",
+    topDebtorsTitle: "Top 10 mijozlar",
+    topSuppliersTitle: "Top 10 yetkazuvchilar",
+    topDebtorsFilterBalance: "Eng ko'p qarzi mavjud",
+    topDebtorsFilterRepaid: "Eng ko'p qarz qaytargan",
+    topDebtorsEmpty: "Ma'lumot yo'q",
     received: "Olingan",
     paid: "To'langan",
     sales: "Savdo",
@@ -698,6 +709,11 @@ const translations: Record<LangCode, Translations> = {
     debtCurrentDebt: "Ҳозирги қарз",
     expectedFromClients: "Мижозлардан кутилаётган маблағ",
     expectedFromClientsTotal: "Мижозлардан кутилмоқда",
+    topDebtorsTitle: "Топ 10 мижоз",
+    topSuppliersTitle: "Топ 10 етказувчилар",
+    topDebtorsFilterBalance: "Энг кўп қарзи мавжуд",
+    topDebtorsFilterRepaid: "Энг кўп қарз қайтарган",
+    topDebtorsEmpty: "Маълумот йўқ",
     received: "Олинган",
     paid: "Тўланган",
     sales: "Савдо",
@@ -968,6 +984,11 @@ const translations: Record<LangCode, Translations> = {
     debtCurrentDebt: "Current debt",
     expectedFromClients: "Expected from clients",
     expectedFromClientsTotal: "Expected from clients",
+    topDebtorsTitle: "Top 10 clients",
+    topSuppliersTitle: "Top 10 suppliers",
+    topDebtorsFilterBalance: "Highest current debt",
+    topDebtorsFilterRepaid: "Most debt repaid",
+    topDebtorsEmpty: "No data",
     received: "Received",
     paid: "Paid",
     sales: "Sales",
@@ -1238,6 +1259,11 @@ const translations: Record<LangCode, Translations> = {
     debtCurrentDebt: "Текущий долг",
     expectedFromClients: "Ожидается от клиентов",
     expectedFromClientsTotal: "Ожидается от клиентов",
+    topDebtorsTitle: "Топ 10 клиентов",
+    topSuppliersTitle: "Топ 10 поставщиков",
+    topDebtorsFilterBalance: "Самый большой текущий долг",
+    topDebtorsFilterRepaid: "Больше всего погашено",
+    topDebtorsEmpty: "Нет данных",
     received: "Получено",
     paid: "Оплачено",
     sales: "Продажи",

@@ -1,4 +1,4 @@
-const API = import.meta.env.VITE_API_URL || "";
+const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -7,15 +7,18 @@ export interface ApiResponse<T = unknown> {
 }
 
 function getAuthHeaders(): Record<string, string> {
-  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
   if (token) headers["Authorization"] = `Bearer ${token}`;
   return headers;
 }
 
 async function request<T>(
   path: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
   const url = path.startsWith("http") ? path : `${API}${path}`;
   const res = await fetch(url, {
@@ -25,11 +28,16 @@ async function request<T>(
       ...options.headers,
     },
   });
-  const json = await res.json().catch(() => ({ success: false, message: "Network error" }));
+  const json = await res
+    .json()
+    .catch(() => ({ success: false, message: "Network error" }));
   return json as ApiResponse<T>;
 }
 
-async function requestAuth<T>(path: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+async function requestAuth<T>(
+  path: string,
+  options: RequestInit = {},
+): Promise<ApiResponse<T>> {
   const url = path.startsWith("http") ? path : `${API}${path}`;
   const res = await fetch(url, {
     ...options,
@@ -38,7 +46,9 @@ async function requestAuth<T>(path: string, options: RequestInit = {}): Promise<
       ...(options.headers as Record<string, string>),
     },
   });
-  const json = await res.json().catch(() => ({ success: false, message: "Network error" }));
+  const json = await res
+    .json()
+    .catch(() => ({ success: false, message: "Network error" }));
   if (res.status === 401) {
     try {
       localStorage.removeItem("accessToken");
@@ -55,8 +65,19 @@ async function requestAuth<T>(path: string, options: RequestInit = {}): Promise<
 export const api = {
   login: (phone: string, password: string) =>
     request<{
-      user: { id: string; name: string | null; phone: string | null; role: string };
-      shop: { id: string; name: string; address: string | null; openAt: string; closeAt: string } | null;
+      user: {
+        id: string;
+        name: string | null;
+        phone: string | null;
+        role: string;
+      };
+      shop: {
+        id: string;
+        name: string;
+        address: string | null;
+        openAt: string;
+        closeAt: string;
+      } | null;
       accessToken: string;
       refreshToken: string;
     }>("/api/v1/auth/login", {
@@ -65,10 +86,13 @@ export const api = {
     }),
 
   refreshToken: (refreshToken: string) =>
-    request<{ accessToken: string; refreshToken: string }>("/api/v1/auth/refresh", {
-      method: "POST",
-      body: JSON.stringify({ refreshToken }),
-    }),
+    request<{ accessToken: string; refreshToken: string }>(
+      "/api/v1/auth/refresh",
+      {
+        method: "POST",
+        body: JSON.stringify({ refreshToken }),
+      },
+    ),
 
   logoutRefresh: (refreshToken?: string) =>
     request("/api/v1/auth/logout-refresh", {
@@ -77,10 +101,13 @@ export const api = {
     }),
 
   sendOwnerCode: (phone: string) =>
-    request<{ code?: string; telegramDeepLink?: string }>("/api/v1/auth/send-owner-code", {
-      method: "POST",
-      body: JSON.stringify({ phone }),
-    }),
+    request<{ code?: string; telegramDeepLink?: string }>(
+      "/api/v1/auth/send-owner-code",
+      {
+        method: "POST",
+        body: JSON.stringify({ phone }),
+      },
+    ),
 
   verifyOwnerCode: (phone: string, code: string) =>
     request("/api/v1/auth/verify-owner-code", {
@@ -97,19 +124,38 @@ export const api = {
     open_at: string;
     close_at: string;
   }) =>
-    request<{ user: unknown; shop: unknown; accessToken: string; refreshToken: string }>(
-      "/api/v1/auth/register-owner",
-      {
-        method: "POST",
-        body: JSON.stringify(body),
-      }
-    ),
+    request<{
+      user: unknown;
+      shop: unknown;
+      accessToken: string;
+      refreshToken: string;
+    }>("/api/v1/auth/register-owner", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  registerCustomer: (body: {
+    full_name: string;
+    phone: string;
+    password: string;
+  }) =>
+    request<{
+      user: unknown;
+      shop: null;
+      accessToken: string;
+      refreshToken: string;
+    }>("/api/v1/auth/register-customer", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   sendResetCode: (phone: string) =>
-    request<{ code?: string; telegramDeepLink?: string }>("/api/v1/auth/send-reset-code", {
-      method: "POST",
-      body: JSON.stringify({ phone }),
-    }),
+    request<{ code?: string; telegramDeepLink?: string }>(
+      "/api/v1/auth/send-reset-code",
+      {
+        method: "POST",
+        body: JSON.stringify({ phone }),
+      },
+    ),
 
   verifyResetCode: (phone: string, code: string) =>
     request("/api/v1/auth/verify-reset-code", {
@@ -117,29 +163,43 @@ export const api = {
       body: JSON.stringify({ phone, code }),
     }),
 
-  setNewPassword: (body: { phone: string; code: string; newPassword: string }) =>
+  setNewPassword: (body: {
+    phone: string;
+    code: string;
+    newPassword: string;
+  }) =>
     request("/api/v1/auth/set-new-password", {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   sendChangePasswordCode: (currentPassword: string) =>
-    requestAuth<{ telegramDeepLink?: string; code?: string }>("/api/v1/auth/send-change-password-code", {
-      method: "POST",
-      body: JSON.stringify({ currentPassword }),
-    }),
+    requestAuth<{ telegramDeepLink?: string; code?: string }>(
+      "/api/v1/auth/send-change-password-code",
+      {
+        method: "POST",
+        body: JSON.stringify({ currentPassword }),
+      },
+    ),
 
-  changePassword: (body: { currentPassword: string; newPassword: string; code: string }) =>
+  changePassword: (body: {
+    currentPassword: string;
+    newPassword: string;
+    code: string;
+  }) =>
     requestAuth("/api/v1/auth/change-password", {
       method: "POST",
       body: JSON.stringify(body),
     }),
 
   sendPhoneChangeCode: (newPhone: string) =>
-    requestAuth<{ telegramDeepLink?: string; code?: string }>("/api/v1/auth/send-phone-change-code", {
-      method: "POST",
-      body: JSON.stringify({ newPhone }),
-    }),
+    requestAuth<{ telegramDeepLink?: string; code?: string }>(
+      "/api/v1/auth/send-phone-change-code",
+      {
+        method: "POST",
+        body: JSON.stringify({ newPhone }),
+      },
+    ),
 
   confirmPhoneChange: (newPhone: string, code: string) =>
     requestAuth<{ phone?: string }>("/api/v1/auth/confirm-phone-change", {
@@ -148,23 +208,50 @@ export const api = {
     }),
 
   // ——— Clients (auth) ———
-  createClient: (body: { name: string; phone: string; initialDebt?: number; dueDate?: string }) =>
-    requestAuth<{ client: { id: string; name: string; phone: string; debt: string; dueDate: string } }>(
-      "/api/v1/clients",
-      { method: "POST", body: JSON.stringify(body) }
-    ),
+  createClient: (body: {
+    name: string;
+    phone: string;
+    initialDebt?: number;
+    dueDate?: string;
+  }) =>
+    requestAuth<{
+      client: {
+        id: string;
+        name: string;
+        phone: string;
+        debt: string;
+        dueDate: string;
+      };
+    }>("/api/v1/clients", { method: "POST", body: JSON.stringify(body) }),
   getClients: () =>
-    requestAuth<{ clients: Array<{ id: string; name: string; phone: string; debt: string; dueDate: string; initials: string }> }>(
-      "/api/v1/clients"
-    ),
+    requestAuth<{
+      clients: Array<{
+        id: string;
+        name: string;
+        phone: string;
+        debt: string;
+        dueDate: string;
+        initials: string;
+      }>;
+    }>("/api/v1/clients"),
 
   // ——— Debts (auth) ———
-  writeDebt: (body: { debtorId: string; amount: number; dueDate?: string; description?: string }) =>
+  writeDebt: (body: {
+    debtorId: string;
+    amount: number;
+    dueDate?: string;
+    description?: string;
+  }) =>
     requestAuth<{ debt: string; debtId: string }>("/api/v1/debts/write", {
       method: "POST",
       body: JSON.stringify(body),
     }),
-  payDebt: (body: { debtorId: string; amount: number; note?: string; paymentMethod?: "CASH" | "CARD" | "BANK" }) =>
+  payDebt: (body: {
+    debtorId: string;
+    amount: number;
+    note?: string;
+    paymentMethod?: "CASH" | "CARD" | "BANK";
+  }) =>
     requestAuth<{ debt: string; debtId: string }>("/api/v1/debts/pay", {
       method: "POST",
       body: JSON.stringify(body),
@@ -180,6 +267,34 @@ export const api = {
         qoldiq: number | null;
       }>;
     }>(`/api/v1/debts/history?debtorId=${encodeURIComponent(debtorId)}`),
+  getMyDebtSummary: () =>
+    requestAuth<{
+      user: { id: string; name: string | null; role: string };
+      summary: {
+        totalBorrowed: number;
+        totalPaid: number;
+        totalCurrentDebt: number;
+        shopsCount: number;
+      };
+      shops: Array<{
+        shopId: string;
+        shopName: string;
+        totalBorrowed: number;
+        totalPaid: number;
+        currentDebt: number;
+        debtsCount: number;
+      }>;
+      history: Array<{
+        id: string;
+        createdAt: string;
+        date: string;
+        action: string;
+        amount: number;
+        qoldiq: number | null;
+        shopId: string;
+        shopName: string;
+      }>;
+    }>("/api/v1/debts/me/summary"),
 
   getDashboardStats: () =>
     requestAuth<{
@@ -204,6 +319,40 @@ export const api = {
         totalPaid: number;
         currentDebt: number;
       };
+      topDebtorsByBalance: Array<{
+        id: string;
+        name: string;
+        phone: string;
+        initials: string;
+        currentDebt: number;
+        totalPaid: number;
+      }>;
+      topDebtorsByRepaid: Array<{
+        id: string;
+        name: string;
+        phone: string;
+        initials: string;
+        currentDebt: number;
+        totalPaid: number;
+      }>;
+      topSuppliersByBalance: Array<{
+        id: string;
+        debtId: string;
+        name: string;
+        phone: string;
+        initials: string;
+        currentDebt: number;
+        totalPaid: number;
+      }>;
+      topSuppliersByRepaid: Array<{
+        id: string;
+        debtId: string;
+        name: string;
+        phone: string;
+        initials: string;
+        currentDebt: number;
+        totalPaid: number;
+      }>;
     }>("/api/v1/dashboard/stats"),
 
   // ——— Suppliers (yetkazuvchilar) ———
@@ -237,17 +386,30 @@ export const api = {
     dueDate?: string;
     description?: string;
   }) =>
-    requestAuth<{ debt: string; debtId: string }>("/api/v1/suppliers/debt/write", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
-  paySupplierDebt: (body: { supplierId: string; amount: number; note?: string; paymentMethod?: "CASH" | "CARD" | "BANK" }) =>
-    requestAuth<{ debt: string; debtId: string }>("/api/v1/suppliers/debt/pay", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+    requestAuth<{ debt: string; debtId: string }>(
+      "/api/v1/suppliers/debt/write",
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+    ),
+  paySupplierDebt: (body: {
+    supplierId: string;
+    amount: number;
+    note?: string;
+    paymentMethod?: "CASH" | "CARD" | "BANK";
+  }) =>
+    requestAuth<{ debt: string; debtId: string }>(
+      "/api/v1/suppliers/debt/pay",
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+    ),
   getBalance: () =>
-    requestAuth<{ cash: string; card: string; bank: string; total: string }>("/api/v1/balance"),
+    requestAuth<{ cash: string; card: string; bank: string; total: string }>(
+      "/api/v1/balance",
+    ),
 
   addSale: (body: {
     cashAmount?: number;
@@ -256,7 +418,10 @@ export const api = {
     saleDateTime?: string;
     comment?: string;
   }) =>
-    requestAuth("/api/v1/balance/sale", { method: "POST", body: JSON.stringify(body) }),
+    requestAuth("/api/v1/balance/sale", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
   getSales: (params?: { fromDate?: string; toDate?: string }) => {
     const sp = new URLSearchParams();
     if (params?.fromDate) sp.set("fromDate", params.fromDate);
@@ -274,14 +439,20 @@ export const api = {
       }>;
     }>(`/api/v1/balance/sales${q ? `?${q}` : ""}`);
   },
-  updateSale: (id: string, body: {
-    cashAmount?: number;
-    cardAmount?: number;
-    bankAmount?: number;
-    saleDateTime?: string;
-    comment?: string;
-  }) =>
-    requestAuth(`/api/v1/balance/sales/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
+  updateSale: (
+    id: string,
+    body: {
+      cashAmount?: number;
+      cardAmount?: number;
+      bankAmount?: number;
+      saleDateTime?: string;
+      comment?: string;
+    },
+  ) =>
+    requestAuth(`/api/v1/balance/sales/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
 
   getSupplierDebtHistory: (supplierId: string) =>
     requestAuth<{
@@ -293,7 +464,9 @@ export const api = {
         isPayment: boolean;
         qoldiq: number | null;
       }>;
-    }>(`/api/v1/suppliers/debt/history?supplierId=${encodeURIComponent(supplierId)}`),
+    }>(
+      `/api/v1/suppliers/debt/history?supplierId=${encodeURIComponent(supplierId)}`,
+    ),
   getSupplierDebtHistoryAll: () =>
     requestAuth<{
       history: Array<{
@@ -345,13 +518,16 @@ export const api = {
         createdAt: string;
       };
     }>("/api/v1/expenses", { method: "POST", body: JSON.stringify(body) }),
-  updateExpense: (id: string, body: {
-    amount?: number;
-    category?: string;
-    description?: string;
-    expenseDate?: string;
-    paymentMethod?: "CASH" | "CARD" | "BANK";
-  }) =>
+  updateExpense: (
+    id: string,
+    body: {
+      amount?: number;
+      category?: string;
+      description?: string;
+      expenseDate?: string;
+      paymentMethod?: "CASH" | "CARD" | "BANK";
+    },
+  ) =>
     requestAuth<{
       expense: {
         id: string;
@@ -361,7 +537,10 @@ export const api = {
         expenseDate: string;
         createdAt: string;
       };
-    }>(`/api/v1/expenses/${id}`, { method: "PATCH", body: JSON.stringify(body) }),
+    }>(`/api/v1/expenses/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
   deleteExpense: (id: string) =>
     requestAuth<{ id: string }>(`/api/v1/expenses/${id}`, { method: "DELETE" }),
 

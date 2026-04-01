@@ -42,18 +42,19 @@ export default function Login() {
       }
       resetShopScopedLists();
       const d = res.data;
-      if (d.user && (d.shop || d.user.role === "Owner")) {
+      if (d.user) {
         const phoneDigits = (d.user.phone ?? "").replace(/\D/g, "").slice(-9);
         useProfileStore.getState().setProfile({
           name: d.user.name ?? "",
           phone: phoneDigits,
+          role: d.user.role ?? "",
           shopName: d.shop?.name ?? "",
           shopAddress: d.shop?.address ?? "",
           userId: d.user.id ?? "",
           shopId: d.shop?.id ?? "",
         });
       }
-      navigate("/dashboard", { replace: true });
+      navigate(d.user?.role === "Customer" ? "/customer" : "/dashboard", { replace: true });
     } else {
       const msg = res.message === "Not found"
         ? t("errorApiNotFound")
@@ -63,7 +64,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 flex flex-col px-4 sm:px-6 max-[380px]:px-3 pt-5 max-[380px]:pt-3 pb-10 max-[380px]:pb-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 flex flex-col px-4 sm:px-6 pt-4 pb-8">
       {/* Header: tema va til — bitta guruh */}
       <div className="flex justify-end">
         <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
@@ -72,12 +73,12 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="max-w-md w-full mx-auto flex flex-col flex-1 mt-10 sm:mt-14 max-[380px]:mt-6">
+      <div className="max-w-md w-full mx-auto flex flex-col flex-1 mt-6 sm:mt-12 justify-center">
         {/* Kartocha: logo + form */}
-        <div className="flex-1 w-full rounded-3xl max-[380px]:rounded-2xl bg-white dark:bg-slate-800/95 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-slate-100 dark:border-slate-700/50 px-6 sm:px-8 max-[380px]:px-4 py-8 sm:py-10 max-[380px]:py-5">
+        <div className="w-full rounded-[2rem] bg-white dark:bg-slate-800/95 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-slate-100 dark:border-slate-700/50 px-5 sm:px-8 py-7 sm:py-10">
           {/* Logo */}
-          <div className="flex justify-center mb-5 max-[380px]:mb-3">
-            <div className="w-16 h-16 max-[380px]:w-14 max-[380px]:h-14 rounded-2xl flex items-center justify-center bg-app-primary/15 dark:bg-app-primary/25 ring-2 ring-app-primary/25 dark:ring-app-primary/35 shadow-inner">
+          <div className="flex justify-center mb-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center bg-app-primary/15 dark:bg-app-primary/25 ring-2 ring-app-primary/25 dark:ring-app-primary/35 shadow-inner">
               <svg
                 width="32"
                 height="32"
@@ -94,57 +95,57 @@ export default function Login() {
               </svg>
             </div>
           </div>
-          <h1 className="text-center text-2xl max-[380px]:text-xl font-bold tracking-tight text-slate-800 dark:text-slate-100 mb-8 max-[380px]:mb-5">
+          <h1 className="text-center text-xl sm:text-2xl font-bold tracking-tight text-slate-800 dark:text-slate-100 mb-6">
             {t("appName")}
           </h1>
 
-          <h2 className="text-xl max-[380px]:text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-800 dark:text-slate-100 mb-1.5">
             {t("loginTitle")}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm max-[380px]:text-xs mb-7 max-[380px]:mb-5">
+          <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mb-6">
             {t("loginSubtitle")}
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col">
             {successMessage && (
-              <p className="text-app-primary-dark dark:text-app-primary text-sm max-[380px]:text-xs mb-4 bg-app-primary/10 dark:bg-app-primary/20 py-3 max-[380px]:py-2.5 px-4 max-[380px]:px-3 rounded-xl border border-app-primary/25 dark:border-app-primary/35" role="status">
+              <p className="text-app-primary-dark dark:text-app-primary text-xs sm:text-sm mb-4 bg-app-primary/10 dark:bg-app-primary/20 py-2.5 px-3 sm:px-4 rounded-xl border border-app-primary/25 dark:border-app-primary/35" role="status">
                 {successMessage}
               </p>
             )}
             {error && (
-              <p className="text-red-600 dark:text-red-400 text-sm max-[380px]:text-xs mb-4 bg-red-50 dark:bg-red-900/20 py-3 max-[380px]:py-2.5 px-4 max-[380px]:px-3 rounded-xl" role="alert">
+              <p className="text-red-600 dark:text-red-400 text-xs sm:text-sm mb-4 bg-red-50 dark:bg-red-900/20 py-2.5 px-3 sm:px-4 rounded-xl" role="alert">
                 {error}
               </p>
             )}
 
-            <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+            <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
               {t("phoneLabel")}
             </label>
-            <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 max-[380px]:px-3 py-3 max-[380px]:py-2.5 mb-4 max-[380px]:mb-3 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
+            <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-4 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
               <svg
-                className="w-5 h-5 text-slate-400 dark:text-slate-500 mr-3 shrink-0"
+                className="w-5 h-5 text-slate-400 dark:text-slate-500 mr-2 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V21a2 2 0 01-2 2h-2C7.82 23 2 17.18 2 10V8a2 2 0 012-2z" />
               </svg>
-              <span className="text-slate-500 dark:text-slate-400 text-sm max-[380px]:text-xs font-medium">+998</span>
+              <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">+998</span>
               <input
                 type="tel"
                 value={formatPhoneDisplay(phone)}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
                 placeholder="90 123 45 67"
-                className="flex-1 min-w-0 ml-2 py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none bg-transparent font-medium max-[380px]:text-sm"
+                className="flex-1 min-w-0 ml-2 py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none bg-transparent text-sm font-medium"
               />
             </div>
 
-            <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+            <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
               {t("passwordLabel")}
             </label>
-            <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 max-[380px]:px-3 py-3 max-[380px]:py-2.5 mb-3 max-[380px]:mb-2 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
+            <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-2 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
               <svg
-                className="w-5 h-5 text-slate-400 dark:text-slate-500 mr-3 shrink-0"
+                className="w-5 h-5 text-slate-400 dark:text-slate-500 mr-2 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -156,7 +157,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("passwordPlaceholder")}
-                className="flex-1 min-w-0 py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none bg-transparent font-medium max-[380px]:text-sm"
+                className="flex-1 min-w-0 py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none bg-transparent text-sm font-medium"
               />
               <button
                 type="button"
@@ -173,10 +174,10 @@ export default function Login() {
                 </svg>
               </button>
             </div>
-            <div className="flex justify-end mb-10 max-[380px]:mb-6 mt-2">
+            <div className="flex justify-end mb-8 mt-1">
               <Link
                 to="/forgot-password"
-                className="text-sm max-[380px]:text-xs font-semibold text-app-primary hover:text-app-primary-dark dark:hover:text-app-primary hover:underline transition-colors"
+                className="text-xs font-semibold text-app-primary hover:text-app-primary-dark dark:hover:text-app-primary/90 hover:underline transition-colors"
               >
                 {t("forgotPassword")}
               </Link>
@@ -185,16 +186,16 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 max-[380px]:py-3.5 rounded-xl font-bold text-white shadow-lg shadow-app-primary/25 hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed bg-app-primary"
+              className="w-full py-3.5 rounded-xl font-bold text-white shadow-lg shadow-app-primary/20 hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed bg-app-primary"
             >
               {loading ? "..." : t("loginButton")}
             </button>
 
-            <p className="text-center text-slate-600 dark:text-slate-400 text-sm max-[380px]:text-xs mt-10 max-[380px]:mt-6">
+            <p className="text-center text-slate-600 dark:text-slate-400 text-xs sm:text-sm mt-8">
               {t("noAccount")}{" "}
               <Link
-                to="/register-owner"
-                className="font-bold text-app-primary hover:text-app-primary-dark dark:hover:text-app-primary hover:underline transition-colors"
+                to="/register"
+                className="font-bold text-app-primary hover:text-app-primary-dark dark:hover:text-app-primary/90 hover:underline transition-colors"
               >
                 {t("register")}
               </Link>

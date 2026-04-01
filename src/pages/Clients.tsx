@@ -318,12 +318,18 @@ export default function Clients() {
         ) : (
           <>
             <ul className="space-y-3">
-              {filteredClients.map((client) => (
+              {filteredClients.map((client, index) => (
                 <li
                   key={client.id}
                   className="rounded-2xl bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 p-4 shadow-sm"
                 >
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
+                    <span
+                      className="w-7 h-7 sm:w-8 sm:h-8 shrink-0 rounded-full bg-app-primary/10 dark:bg-app-primary/20 flex items-center justify-center text-app-primary-dark dark:text-app-primary text-xs font-bold tabular-nums"
+                      aria-hidden
+                    >
+                      {index + 1}
+                    </span>
                     {/* Avatar (placeholder) */}
                     <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-slate-700 dark:text-slate-200 font-bold text-sm shrink-0 overflow-hidden">
                       {client.initials}

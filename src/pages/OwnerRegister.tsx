@@ -45,7 +45,7 @@ export default function OwnerRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 flex flex-col px-4 sm:px-6 pt-5 pb-10">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 flex flex-col px-4 sm:px-6 pt-4 pb-8">
       <div className="flex items-center justify-end">
         <div className="flex items-center gap-1 p-1 rounded-2xl bg-white/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-sm backdrop-blur-sm">
           <ThemeToggle />
@@ -53,9 +53,9 @@ export default function OwnerRegister() {
         </div>
       </div>
 
-      <div className="max-w-md w-full mx-auto flex flex-col flex-1 mt-10 sm:mt-14">
-        <div className="flex-1 w-full rounded-3xl bg-white dark:bg-slate-800/95 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-slate-100 dark:border-slate-700/50 px-6 sm:px-8 py-8 sm:py-10">
-          <div className="flex items-center justify-between mb-6">
+      <div className="max-w-md w-full mx-auto flex flex-col flex-1 mt-6 sm:mt-12 justify-center">
+        <div className="w-full rounded-[2rem] bg-white dark:bg-slate-800/95 shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-slate-100 dark:border-slate-700/50 px-5 sm:px-8 py-7 sm:py-10">
+          <div className="flex items-center justify-between mb-5">
             <button
               type="button"
               onClick={() => (step > 1 ? setStep(step - 1) : navigate("/"))}
@@ -82,13 +82,13 @@ export default function OwnerRegister() {
 
           {step === 1 && (
             <>
-              <h2 className="text-xl font-bold mt-7 mb-1 text-slate-800 dark:text-slate-100">
+              <h2 className="text-lg sm:text-xl font-bold mt-5 mb-1.5 text-slate-800 dark:text-slate-100">
                 {t("personalTitle")}
               </h2>
-              <p className="text-slate-500 dark:text-slate-400 text-sm mb-7">
+              <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mb-6">
                 {t("personalSubtitle")}
               </p>
-              <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+              <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
                 {t("fullNameLabel")}
               </label>
               <input
@@ -96,31 +96,31 @@ export default function OwnerRegister() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder={t("fullNamePlaceholder")}
-                className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary font-medium mb-4"
+                className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary text-sm font-medium mb-4"
               />
-              <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+              <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
                 {t("phoneLabel")}
               </label>
-              <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-4 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary">
+              <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-4 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
                 <span className="text-slate-500 dark:text-slate-400 text-sm font-medium">+998</span>
                 <input
                   type="tel"
                   value={formatPhoneDisplay(phone)}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 9))}
                   placeholder="90 123 45 67"
-                  className="flex-1 ml-2 bg-transparent py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none font-medium"
+                  className="flex-1 min-w-0 ml-2 bg-transparent py-0.5 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none text-sm font-medium"
                 />
               </div>
-              <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+              <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
                 {t("createPasswordLabel")}
               </label>
-              <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-6 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary">
+              <div className="flex items-center bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 mb-6 focus-within:ring-2 focus-within:ring-app-primary/40 focus-within:border-app-primary dark:focus-within:border-app-primary transition-shadow">
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={t("minChars")}
-                  className="flex-1 bg-transparent py-0.5 px-0 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none font-medium"
+                  className="flex-1 min-w-0 bg-transparent py-0.5 px-0 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none text-sm font-medium"
                 />
                 <button
                   type="button"
@@ -140,7 +140,7 @@ export default function OwnerRegister() {
               <button
                 type="button"
                 onClick={handleStep1}
-                className="w-full py-4 rounded-xl font-bold text-white shadow-lg hover:brightness-105 active:scale-[0.98] transition-all duration-200 bg-app-primary"
+                className="w-full py-3.5 rounded-xl font-bold text-white shadow-lg shadow-app-primary/20 hover:brightness-105 active:scale-[0.98] transition-all duration-200 bg-app-primary"
               >
                 {t("next")}
               </button>
@@ -210,13 +210,13 @@ function Step2({
 
   return (
     <>
-      <h2 className="text-xl font-bold mt-7 mb-1 text-slate-800 dark:text-slate-100">
+      <h2 className="text-lg sm:text-xl font-bold mt-5 mb-1.5 text-slate-800 dark:text-slate-100">
         {t("shopTitle")}
       </h2>
-      <p className="text-slate-500 dark:text-slate-400 text-sm mb-7">
+      <p className="text-slate-500 dark:text-slate-400 text-xs sm:text-sm mb-6">
         {t("shopSubtitle")}
       </p>
-      <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+      <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
         {t("shopNameLabel")}
       </label>
       <input
@@ -224,9 +224,9 @@ function Step2({
         value={shopName}
         onChange={(e) => setShopName(e.target.value)}
         placeholder={t("shopNamePlaceholder")}
-        className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary font-medium mb-4"
+        className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary text-sm font-medium mb-4 transition-shadow"
       />
-      <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+      <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
         {t("addressLabel")}
       </label>
       <input
@@ -234,9 +234,9 @@ function Step2({
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         placeholder={t("addressPlaceholder")}
-        className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary font-medium mb-4"
+        className="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-app-primary/40 focus:border-app-primary dark:focus:border-app-primary text-sm font-medium mb-4 transition-shadow"
       />
-      <label className="block text-sm font-semibold mb-2 text-slate-700 dark:text-slate-200">
+      <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-200">
         {t("workingHours")}
       </label>
       <div className="grid grid-cols-2 gap-3 mb-6">
@@ -257,7 +257,7 @@ function Step2({
         type="button"
         onClick={handleStep2}
         disabled={loading}
-        className="w-full py-4 rounded-xl font-bold text-white shadow-lg hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 bg-app-primary"
+        className="w-full py-3.5 rounded-xl font-bold text-white shadow-lg shadow-app-primary/20 hover:brightness-105 active:scale-[0.98] transition-all duration-200 disabled:opacity-50 bg-app-primary"
       >
         {t("next")}
       </button>
@@ -365,6 +365,7 @@ function Step3({
         useProfileStore.getState().setProfile({
           name: d.user.name ?? "",
           phone: phoneDigits,
+          role: "Owner",
           shopName: d.shop.name ?? "",
           shopAddress: d.shop.address ?? "",
           userId: d.user.id ?? "",

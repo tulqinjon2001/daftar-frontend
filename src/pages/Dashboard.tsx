@@ -11,6 +11,19 @@ import { AppHeader } from "../components/AppHeader";
 import { appStyles } from "../theme/tokens";
 import { DateRangePicker } from "../components/DateRangePicker";
 import { formatSum, parseAmountString } from "../utils/amountFormat";
+import type { Client } from "../stores/clientStore";
+import type { Supplier } from "../stores/supplierStore";
+
+type DashboardTopDebtorRow = {
+  id: string;
+  name: string;
+  phone: string;
+  initials: string;
+  currentDebt: number;
+  totalPaid: number;
+};
+
+type DashboardTopSupplierRow = DashboardTopDebtorRow & { debtId: string };
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -22,7 +35,13 @@ export default function Dashboard() {
   const [stats, setStats] = useState<{
     clientDebtStats?: { totalOlingan: number; totalTolangan: number; currentDebt: number };
     supplierDebtStats?: { totalGoodsTaken: number; totalPaid: number; currentDebt: number };
+    topDebtorsByBalance?: DashboardTopDebtorRow[];
+    topDebtorsByRepaid?: DashboardTopDebtorRow[];
+    topSuppliersByBalance?: DashboardTopSupplierRow[];
+    topSuppliersByRepaid?: DashboardTopSupplierRow[];
   } | null>(null);
+  const [topDebtorView, setTopDebtorView] = useState<"balance" | "repaid">("balance");
+  const [topSupplierView, setTopSupplierView] = useState<"balance" | "repaid">("balance");
   const [loading, setLoading] = useState(true);
   const [balance, setBalance] = useState<{
     cash: string;
@@ -145,6 +164,40 @@ export default function Dashboard() {
 
   const applyFilter = () => {
     setShowBalanceDateFilter(false);
+  };
+
+  const topDebtorsList: DashboardTopDebtorRow[] =
+    topDebtorView === "balance" ? stats?.topDebtorsByBalance ?? [] : stats?.topDebtorsByRepaid ?? [];
+
+  const openClientCardFromTopDebtor = (row: DashboardTopDebtorRow) => {
+    const client: Client = {
+      id: row.id,
+      backendId: row.id,
+      name: row.name,
+      phone: row.phone || "",
+      debt: String(Math.round(row.currentDebt)),
+      dueDate: "",
+      status: row.currentDebt > 0 ? "inPayment" : null,
+      initials: row.initials || "MJ",
+    };
+    navigate("/clients/card", { state: { client } });
+  };
+
+  const topSuppliersList: DashboardTopSupplierRow[] =
+    topSupplierView === "balance" ? stats?.topSuppliersByBalance ?? [] : stats?.topSuppliersByRepaid ?? [];
+
+  const openSupplierCardFromTop = (row: DashboardTopSupplierRow) => {
+    const supplier: Supplier = {
+      id: row.id,
+      backendId: row.id,
+      name: row.name,
+      phone: row.phone || undefined,
+      debt: String(Math.round(row.currentDebt)),
+      dueDate: "",
+      dateInfo: "",
+      debtId: row.debtId,
+    };
+    navigate("/suppliers/card", { state: { supplier } });
   };
 
   return (
@@ -521,6 +574,87 @@ export default function Dashboard() {
               </span>
             </div>
           </button>
+
+          <div className="mt-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 p-4 shadow-sm">
+            <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">{t("topDebtorsTitle")}</p>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setTopDebtorView("balance")}
+                className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl text-xs font-semibold transition-colors ${
+                  topDebtorView === "balance"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 border border-amber-200/80 dark:border-amber-800/50"
+                }`}
+              >
+                {t("topDebtorsFilterBalance")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTopDebtorView("repaid")}
+                className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl text-xs font-semibold transition-colors ${
+                  topDebtorView === "repaid"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 border border-amber-200/80 dark:border-amber-800/50"
+                }`}
+              >
+                {t("topDebtorsFilterRepaid")}
+              </button>
+            </div>
+            {loading ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">—</p>
+            ) : topDebtorsList.length === 0 ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">{t("topDebtorsEmpty")}</p>
+            ) : (
+              <ul className="space-y-2">
+                {topDebtorsList.map((row, i) => (
+                  <li key={`${row.id}-${i}`}>
+                    <button
+                      type="button"
+                      onClick={() => openClientCardFromTopDebtor(row)}
+                      className="w-full flex items-center gap-3 rounded-xl bg-white/60 dark:bg-slate-800/50 border border-amber-100/80 dark:border-amber-900/40 px-3 py-2.5 text-left hover:bg-white/90 dark:hover:bg-slate-800/80 active:opacity-90 transition-colors"
+                    >
+                      <span className="w-7 h-7 shrink-0 rounded-full bg-orange-500/15 dark:bg-orange-500/25 text-orange-600 dark:text-orange-400 text-xs font-bold flex items-center justify-center tabular-nums">
+                        {i + 1}
+                      </span>
+                      <span className="w-10 h-10 shrink-0 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xs font-bold">
+                        {(row.initials || "MJ").slice(0, 3)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{row.name}</p>
+                        {row.phone ? (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{row.phone}</p>
+                        ) : null}
+                      </div>
+                      <div className="text-right shrink-0 max-w-[48%]">
+                        {topDebtorView === "balance" ? (
+                          <>
+                            <p className="text-sm font-bold text-orange-600 dark:text-orange-400 tabular-nums leading-tight">
+                              {formatSum(row.currentDebt)}{" "}
+                              <span className="text-xs font-normal text-slate-500 dark:text-slate-400">{t("currency")}</span>
+                            </p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                              {t("debtTotalTolangan")}: {formatSum(row.totalPaid)}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-bold text-app-primary dark:text-emerald-400 tabular-nums leading-tight">
+                              {formatSum(row.totalPaid)}{" "}
+                              <span className="text-xs font-normal text-slate-500 dark:text-slate-400">{t("currency")}</span>
+                            </p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                              {t("debtCurrentDebt")}: {formatSum(row.currentDebt)}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
 
         {/* 4. Yetkazuvchilarga qarz — xuddi Qarzlar nazorati dizayni */}
@@ -607,6 +741,87 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
+          </div>
+
+          <div className="mt-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900/40 p-4 shadow-sm">
+            <p className="text-sm font-bold text-slate-800 dark:text-slate-100 mb-3">{t("topSuppliersTitle")}</p>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <button
+                type="button"
+                onClick={() => setTopSupplierView("balance")}
+                className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl text-xs font-semibold transition-colors ${
+                  topSupplierView === "balance"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 border border-amber-200/80 dark:border-amber-800/50"
+                }`}
+              >
+                {t("topDebtorsFilterBalance")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTopSupplierView("repaid")}
+                className={`flex-1 min-w-[140px] py-2 px-3 rounded-xl text-xs font-semibold transition-colors ${
+                  topSupplierView === "repaid"
+                    ? "bg-orange-500 text-white shadow-md"
+                    : "bg-white/70 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 border border-amber-200/80 dark:border-amber-800/50"
+                }`}
+              >
+                {t("topDebtorsFilterRepaid")}
+              </button>
+            </div>
+            {loading ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">—</p>
+            ) : topSuppliersList.length === 0 ? (
+              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">{t("topDebtorsEmpty")}</p>
+            ) : (
+              <ul className="space-y-2">
+                {topSuppliersList.map((row, i) => (
+                  <li key={`${row.id}-${i}`}>
+                    <button
+                      type="button"
+                      onClick={() => openSupplierCardFromTop(row)}
+                      className="w-full flex items-center gap-3 rounded-xl bg-white/60 dark:bg-slate-800/50 border border-amber-100/80 dark:border-amber-900/40 px-3 py-2.5 text-left hover:bg-white/90 dark:hover:bg-slate-800/80 active:opacity-90 transition-colors"
+                    >
+                      <span className="w-7 h-7 shrink-0 rounded-full bg-orange-500/15 dark:bg-orange-500/25 text-orange-600 dark:text-orange-400 text-xs font-bold flex items-center justify-center tabular-nums">
+                        {i + 1}
+                      </span>
+                      <span className="w-10 h-10 shrink-0 rounded-xl bg-orange-500 flex items-center justify-center text-white text-xs font-bold">
+                        {(row.initials || "YT").slice(0, 3)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{row.name}</p>
+                        {row.phone ? (
+                          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{row.phone}</p>
+                        ) : null}
+                      </div>
+                      <div className="text-right shrink-0 max-w-[48%]">
+                        {topSupplierView === "balance" ? (
+                          <>
+                            <p className="text-sm font-bold text-orange-600 dark:text-orange-400 tabular-nums leading-tight">
+                              {formatSum(row.currentDebt)}{" "}
+                              <span className="text-xs font-normal text-slate-500 dark:text-slate-400">{t("currency")}</span>
+                            </p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                              {t("supplierPaid")}: {formatSum(row.totalPaid)}
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-sm font-bold text-app-primary dark:text-emerald-400 tabular-nums leading-tight">
+                              {formatSum(row.totalPaid)}{" "}
+                              <span className="text-xs font-normal text-slate-500 dark:text-slate-400">{t("currency")}</span>
+                            </p>
+                            <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight">
+                              {t("supplierCurrentDebt")}: {formatSum(row.currentDebt)}
+                            </p>
+                          </>
+                        )}
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </main>

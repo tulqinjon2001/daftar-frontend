@@ -154,6 +154,7 @@ export default function Security() {
   const shopAddress = useProfileStore((s) => s.shopAddress);
   const userId = useProfileStore((s) => s.userId);
   const shopId = useProfileStore((s) => s.shopId);
+  const role = useProfileStore((s) => s.role);
   const setProfile = useProfileStore((s) => s.setProfile);
 
   const pwdOtpRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -331,7 +332,7 @@ export default function Security() {
 
   return (
     <AppPage>
-      <AppHeader title={t("security")} backFallback="/profile" />
+      <AppHeader title={t("security")} backFallback={role === "Customer" ? "/customer/profile" : "/profile"} />
 
       <main className="flex-1 px-4 py-6 space-y-8 pb-24">
         <TelegramOtpNotice />

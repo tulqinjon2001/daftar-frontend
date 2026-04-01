@@ -5,6 +5,7 @@ const STORAGE_KEY = "qarz_profile";
 export interface ProfileData {
   name: string;
   phone: string;
+  role: string;
   shopName: string;
   shopAddress: string;
   userId: string;
@@ -13,21 +14,22 @@ export interface ProfileData {
 
 function load(): ProfileData {
   if (typeof window === "undefined")
-    return { name: "", phone: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
+    return { name: "", phone: "", role: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { name: "", phone: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
+    if (!raw) return { name: "", phone: "", role: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
     const data = JSON.parse(raw) as Partial<ProfileData>;
     return {
       name: data.name ?? "",
       phone: data.phone ?? "",
+      role: data.role ?? "",
       shopName: data.shopName ?? "",
       shopAddress: data.shopAddress ?? "",
       userId: data.userId ?? "",
       shopId: data.shopId ?? "",
     };
   } catch {
-    return { name: "", phone: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
+    return { name: "", phone: "", role: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
   }
 }
 
@@ -38,13 +40,13 @@ function save(data: ProfileData) {
 }
 
 interface ProfileState extends ProfileData {
-  setProfile: (data: ProfileData) => void;
+  setProfile: (data: Partial<ProfileData>) => void;
   clear: () => void;
   /** localStorage dan qayta o‘qib store ni to‘ldiradi (boshqa tab da ro‘yxatdan o‘tgan bo‘lsa). */
   hydrateFromStorage: () => void;
 }
 
-const empty: ProfileData = { name: "", phone: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
+const empty: ProfileData = { name: "", phone: "", role: "", shopName: "", shopAddress: "", userId: "", shopId: "" };
 
 export const useProfileStore = create<ProfileState>((set) => ({
   ...load(),
@@ -53,6 +55,7 @@ export const useProfileStore = create<ProfileState>((set) => ({
       const next: ProfileData = {
         name: data.name ?? prev.name,
         phone: data.phone ?? prev.phone,
+        role: data.role ?? prev.role,
         shopName: data.shopName ?? prev.shopName,
         shopAddress: data.shopAddress ?? prev.shopAddress,
         userId: data.userId ?? prev.userId,
